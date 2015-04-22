@@ -12,10 +12,13 @@
  */
 package org.jboss.aesh.cloverxell.controller;
 
-import org.esmerilprogramming.cloverx.annotation.Controller;
-import org.esmerilprogramming.cloverx.annotation.Page;
-import org.esmerilprogramming.cloverx.http.CloverXRequest;
-import org.esmerilprogramming.cloverx.http.CloverXSession;
+import org.esmerilprogramming.overtown.annotation.Controller;
+import org.esmerilprogramming.overtown.annotation.Page;
+import org.esmerilprogramming.overtown.annotation.path.Get;
+import org.esmerilprogramming.overtown.annotation.path.Post;
+import org.esmerilprogramming.overtown.http.HttpResponse;
+import org.esmerilprogramming.overtown.http.OvertownRequest;
+import org.esmerilprogramming.overtown.http.OvertownSession;
 
 /**
  * @author <a href="mailto:00hf11@gmail.com">Helio Frota</a>
@@ -26,13 +29,13 @@ public class CloverxellController {
     private static final String AESH = "aesh";
     private static final String TEMPLATE = "cloverxell.ftl";
 
-    @Page(value = "", responseTemplate = TEMPLATE)
+    @Get(value = "", template = TEMPLATE)
     public void init() throws Exception {
 
     }
 
-    @Page("send")
-    public void send(String command, String customCommand, CloverXRequest request) throws Exception {
+    @Post("send")
+    public void send(String command, String customCommand, OvertownRequest request) throws Exception {
         AeshHandler aesh = getAeshHandler(request);
         if (customCommand == null) {
             aesh.run(command);
@@ -41,20 +44,21 @@ public class CloverxellController {
             aesh.run(customCommand);
         }
 
+
         String result = aesh.getResult();
         result = result.replaceAll("@", " ");
         result = result + "@" + aesh.getCurrentDirectory();
-        request.getExchange().getResponseSender().send(result);
+        ((HttpResponse)request.getResponse()).sendAsResponse(result);
         aesh.reset();
     }
 
     @Page("remove")
-    public void remove(String commandName, CloverXRequest request) {
+    public void remove(String commandName, OvertownRequest request) {
         getAeshHandler(request).remove(commandName);
     }
 
-    protected AeshHandler getAeshHandler(CloverXRequest request) {
-        CloverXSession session = request.getSession();
+    protected AeshHandler getAeshHandler(OvertownRequest request) {
+        OvertownSession session = request.getSession();
         if (session.getAttribute(AESH) == null) {
             session.setAttribute(AESH, new AeshHandler());
         }

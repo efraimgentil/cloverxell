@@ -13,10 +13,11 @@
 package org.jboss.aesh.cloverxell;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import org.esmerilprogramming.cloverx.server.CloverX;
-import org.esmerilprogramming.cloverx.server.ConfigurationBuilder;
+import org.esmerilprogramming.overtown.server.Overtown;
+import org.esmerilprogramming.overtown.server.ConfigurationBuilder;
 
 /**
  * @author <a href="mailto:00hf11@gmail.com">Helio Frota</a>
@@ -29,13 +30,11 @@ public class AppMain {
 
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.withHost("0.0.0.0");
+        cb.withPort(9991);
         cb.withAppContext("app");
         cb.withPackageToScan("org.jboss.aesh.cloverxell");
 
-        List<String> options = new ArrayList<>();
-        for (String o : args) {
-            options.add(o);
-        }
+        List<String> options = Arrays.asList( args );
 
         if (options.contains("help")) {
             System.out.println(HELP);
@@ -73,7 +72,6 @@ public class AppMain {
             }
         }
 
-        new CloverX(cb.build());
-
+        new Overtown(cb.build());
     }
 }
